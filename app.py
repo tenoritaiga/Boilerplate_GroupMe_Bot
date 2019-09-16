@@ -9,7 +9,7 @@ from urllib.request import Request, urlopen
 import requests
 from flask import Flask, request, render_template
 
-app = Flask(__name__, template_folder= "/templates")
+app = Flask(__name__)
 bot_id = "REPLACE THIS WITH YOUR BOT ID ONCE BOT IS ADDED TO THE CHAT"
 
 # Called whenever the app's callback URL receives a POST request
@@ -26,7 +26,7 @@ def webhook():
 
 @app.route("/", methods=['GET'])
 def index():
-	return render_template("index.html")
+	return render_template("index.html",message="hello flask")
 
 
 ################################################################################
