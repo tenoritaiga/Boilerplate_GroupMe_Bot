@@ -6,7 +6,8 @@ import os
 import json
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
-from flask import Flask, request
+import requests
+from flask import Flask, request, render_template
 
 app = Flask(__name__)
 bot_id = "REPLACE THIS WITH YOUR BOT ID ONCE BOT IS ADDED TO THE CHAT"
@@ -18,9 +19,15 @@ def webhook():
 	# 'message' is an object that represents a single GroupMe message.
 	message = request.get_json()
 
-	# TODO: Your bot's logic here
+	# stonks functions go here
+
 
 	return "ok", 200
+
+@app.route("/", methods=['GET'])
+def index():
+	return render_template("index.html")
+
 
 ################################################################################
 
@@ -45,7 +52,7 @@ def reply_with_image(msg, imgURL):
 	}
 	request = Request(url, urlencode(data).encode())
 	json = urlopen(request).read().decode()
-	
+
 # Uploads image to GroupMe's services and returns the new URL
 def upload_image_to_groupme(imgURL):
 	imgRequest = requests.get(imgURL, stream=True)
