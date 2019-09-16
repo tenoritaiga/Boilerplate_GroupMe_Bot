@@ -9,7 +9,7 @@ from urllib.request import Request, urlopen
 import requests
 from flask import Flask, request, render_template
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder= "/templates")
 bot_id = "REPLACE THIS WITH YOUR BOT ID ONCE BOT IS ADDED TO THE CHAT"
 
 # Called whenever the app's callback URL receives a POST request
