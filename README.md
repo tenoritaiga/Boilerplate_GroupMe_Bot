@@ -1,4 +1,4 @@
-# Boilerplate GroupMe Bot *(Python 3)*
+# WaltBot Finance Bot
 
 The humble beginnings for *your* shiny new GroupMe bot! This boilerplate draws heavily on @apnorton's example, which he discusses in depth in his blogpost, ["How I wrote a GroupMe Chatbot in 24 hours"](http://www.apnorton.com/blog/2017/02/28/How-I-wrote-a-Groupme-Chatbot-in-24-hours/). I've added a few functions to abstract away common needs.
 
