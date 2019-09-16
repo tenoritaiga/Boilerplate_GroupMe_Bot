@@ -7,7 +7,7 @@ import json
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 import requests
-from flask import Flask, request, render_template
+from flask import Flask, request
 
 app = Flask(__name__)
 bot_id = "REPLACE THIS WITH YOUR BOT ID ONCE BOT IS ADDED TO THE CHAT"
@@ -24,10 +24,19 @@ def webhook():
 
 	return "ok", 200
 
-@app.route("/", methods=['GET'])
-def index():
-	return render_template("index.html",message="hello flask")
 
+@app.route('/', methods=['GET'])
+def get_token():
+	#Get the Auth Code
+	code = request.args.get('code')
+
+	#Post Access Token Request
+	headers = { 'Content-Type': 'application/x-www-form-urlencoded' }
+	data = { 'grant_type': 'authorization_code', 'access_type': 'offline', 'code': code, 'client_id': 'Consumer Key', 'redirect_uri': 'Redirect URI'}
+	authReply = requests.post('https://api.tdameritrade.com/v1/oauth2/token', headers=headers, data=data)
+	
+	#returned just to test that it's working
+	print(authReply.text.encode())
 
 ################################################################################
 
