@@ -60,7 +60,7 @@ def get_new_auth_token():
     headers = { 'Content-Type': 'application/x-www-form-urlencoded' }
     data = { 'grant_type': 'refresh_token', 'refresh_token': refresh_token, 'access_type': 'offline', 'client_id': client_id, 'redirect_uri': redirect_uri}
     resp = requests.post(token_url,headers=headers,data=data)
-    
+    print(resp.json())
     return resp.json()['access_token']
 
 # Send a message in the groupchat
