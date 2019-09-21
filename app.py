@@ -6,7 +6,6 @@ import os
 import json
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
-import requests
 from flask import Flask, request
 
 app = Flask(__name__)
@@ -19,24 +18,9 @@ def webhook():
 	# 'message' is an object that represents a single GroupMe message.
 	message = request.get_json()
 
-	# stonks functions go here
-
+	# TODO: Your bot's logic here
 
 	return "ok", 200
-
-
-@app.route('/', methods=['GET'])
-def get_token():
-	#Get the Auth Code
-	code = request.args.get('code')
-
-	#Post Access Token Request
-	headers = { 'Content-Type': 'application/x-www-form-urlencoded' }
-	data = { 'grant_type': 'authorization_code', 'access_type': 'offline', 'code': code, 'client_id': 'Consumer Key', 'redirect_uri': 'Redirect URI'}
-	authReply = requests.post('https://api.tdameritrade.com/v1/oauth2/token', headers=headers, data=data)
-	
-	#returned just to test that it's working
-	print(authReply.text.encode())
 
 ################################################################################
 
@@ -61,7 +45,7 @@ def reply_with_image(msg, imgURL):
 	}
 	request = Request(url, urlencode(data).encode())
 	json = urlopen(request).read().decode()
-
+	
 # Uploads image to GroupMe's services and returns the new URL
 def upload_image_to_groupme(imgURL):
 	imgRequest = requests.get(imgURL, stream=True)
