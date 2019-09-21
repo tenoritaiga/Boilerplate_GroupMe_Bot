@@ -2,13 +2,21 @@
 
 
 # IMPORTS
-import os
-import json
+import os, json, requests
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 from flask import Flask, request
+from flask.json import jsonify
+from pprint import pformat
+from time import time
 
 app = Flask(__name__)
+client_id = os.environ.get('CLIENT_ID')
+refresh_token = os.environ.get('REFRESH_TOKEN')
+redirect_uri = "https://waltbot-groupme.herokuapp.com"
+authorization_base_url = "https://auth.tdameritrade.com/auth"
+token_url = "https://api.tdameritrade.com/v1/oauth2/token"
+
 bot_id = "REPLACE THIS WITH YOUR BOT ID ONCE BOT IS ADDED TO THE CHAT"
 
 # Called whenever the app's callback URL receives a POST request
@@ -21,8 +29,19 @@ def webhook():
 	# TODO: Your bot's logic here
 
 	return "ok", 200
+    
+@app.route('/', methods=['GET'])
+def test():
+    return get_new_auth_token()
 
 ################################################################################
+
+def get_new_auth_token():
+    headers = { 'Content-Type': 'application/x-www-form-urlencoded' }
+    data = { 'grant_type': 'refresh_token', 'refresh_token': refresh_token, 'access_type': 'offline', 'client_id': client_id, 'redirect_uri': redirect_uri}
+    resp = requests.post(token_url,headers=headers,data=data)
+    
+    return resp.json()['access_token']
 
 # Send a message in the groupchat
 def reply(msg):
