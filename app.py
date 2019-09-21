@@ -22,7 +22,7 @@ token_url = "https://api.tdameritrade.com/v1/oauth2/token"
 bot_id = "REPLACE THIS WITH YOUR BOT ID ONCE BOT IS ADDED TO THE CHAT"
 
 # Connect to redis
-r = redis.from_url(os.environ.get("REDIS_URL"),decode_components=True)
+r = redis.from_url(os.environ.get("REDIS_URL"))
 r.set('auth_token','none')
 r.set('auth_timestamp','2010-01-01T00:01:10.490919+00:00')
 
@@ -40,16 +40,16 @@ def webhook():
     
 @app.route('/', methods=['GET'])
 def test():
-    auth_token = r.get('auth_token')
+    auth_token = r.get('auth_token').decode('utf-8')
     
     # If the token is stale, request a new one and store it along with the
     # timestamp of when we requested it
-    timestamp = r.get('auth_timestamp')
+    timestamp = r.get('auth_timestamp').decode('utf-8')
     if arrow.get(timestamp) < (arrow.utcnow().shift(minutes=-30)):
         print("requesting a new auth token")
         auth_token = get_new_auth_token()
-        r.set('auth_token',auth_token)
-        r.set('auth_timestamp',str(arrow.utcnow()))
+        r.set('auth_token',str(auth_token).encode('utf-8'))
+        r.set('auth_timestamp',str(arrow.utcnow()).encode('utf-8'))
         
     return auth_token
         
