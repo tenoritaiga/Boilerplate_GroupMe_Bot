@@ -44,7 +44,8 @@ def test():
     
     # If the token is stale, request a new one and store it along with the
     # timestamp of when we requested it
-    if arrow.get(r.get('auth_timestamp')) < (arrow.utcnow().shift(minutes=-30)):
+    timestamp = r.get('auth_timestamp')
+    if arrow.get(timestamp) < (arrow.utcnow().shift(minutes=-30)):
         print("requesting a new auth token")
         auth_token = get_new_auth_token()
         r.set('auth_token',auth_token)
