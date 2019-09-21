@@ -33,14 +33,13 @@ def webhook():
     
 @app.route('/', methods=['GET'])
 def test():
-
     with open('./cache.txt','r') as cache_file:
         auth_token = cache_file.readline()
         auth_timestamp = cache_file.readline()
     
     # If the token is stale, request a new one and store it along with the
     # timestamp of when we requested it
-    if arrow.get(auth_timestamp) < (arw.shift(minutes=-30)):
+    if arrow.get(auth_timestamp) < (arrow.utcnow().shift(minutes=-30)):
         print("requesting a new auth token")
         auth_token = get_new_auth_token()
         with open('./cache.txt','w') as cache_file:
