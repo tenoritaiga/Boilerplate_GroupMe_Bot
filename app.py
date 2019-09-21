@@ -9,6 +9,7 @@ from flask import Flask, request
 from flask.json import jsonify
 from pprint import pformat
 from time import time
+import arrow
 
 app = Flask(__name__)
 client_id = os.environ.get('CLIENT_ID')
@@ -32,7 +33,18 @@ def webhook():
     
 @app.route('/', methods=['GET'])
 def test():
-    return get_new_auth_token()
+    auth_token = os.environ.get('AUTH_TOKEN')
+    arw = arrow.utcnow()
+    
+    # If the token is stale, request a new one and store it along with the
+    # timestamp of when we requested it
+    if arrow.get(os.environ.get('AUTH_TIMESTAMP')) < (arw.shift(minutes=-30)):
+        auth_token = get_new_auth_token()
+        os.environ['AUTH_TOKEN'] = auth_token
+        os.environ['AUTH_TIMESTAMP'] = str(arrow.utcnow())
+        
+    return auth_token
+        
 
 ################################################################################
 
