@@ -19,27 +19,20 @@ redirect_uri = "https://waltbot-groupme.herokuapp.com"
 authorization_base_url = "https://auth.tdameritrade.com/auth"
 token_url = "https://api.tdameritrade.com/v1/oauth2/token"
 
-bot_id = "REPLACE THIS WITH YOUR BOT ID ONCE BOT IS ADDED TO THE CHAT"
+bot_id = "882ff3bebbc2fd9cfac5674ab3"
 
 # Connect to redis
 r = redis.from_url(os.environ.get("REDIS_URL"),decode_responses=True)
 
 r.set('auth_token','none')
+# Initially set a timestamp way in the past so that on app start we always request a fresh token
 r.set('auth_timestamp','2010-09-22T02:58:26.073140+00:00')
 
 # Called whenever the app's callback URL receives a POST request
 # That'll happen every time a message is sent in the group
 @app.route('/', methods=['POST'])
 def webhook():
-	# 'message' is an object that represents a single GroupMe message.
-	message = request.get_json()
 
-	# TODO: Your bot's logic here
-
-	return "ok", 200
-    
-@app.route('/', methods=['GET'])
-def test():
     auth_timestamp = r.get('auth_timestamp')
     auth_token = r.get('auth_token')
     print("auth_timestamp is: {}".format(auth_timestamp))
@@ -51,6 +44,19 @@ def test():
         r.set('auth_token',auth_token)
         auth_timestamp = str(arrow.utcnow())
         r.set('auth_timestamp',auth_timestamp)
+        
+	# 'message' is an object that represents a single GroupMe message.
+	message = request.get_json()
+
+	if message['text'].startswith('!stonks'):
+        symbol = message['text'].split(' ')[1]
+        reply(get_quote(symbol,auth_token))
+
+	return "ok", 200
+    
+@app.route('/', methods=['GET'])
+def test():
+
     return auth_token
         
 
@@ -62,6 +68,17 @@ def get_new_auth_token():
     resp = requests.post(token_url,headers=headers,data=data)
     print(resp.json())
     return resp.json()['access_token']
+
+def get_quote(symbol,token):
+    try:
+        headers = {'content-type': 'application/json', 'Authorization': 'Bearer ' + token}
+        url = "https://api.tdameritrade.com/v1/marketdata/"+symbol+"/quotes"
+        r = requests.get(url,headers=headers)
+        resp = r.json()[symbol]
+        return resp['description'] + ' - Last price: ' + resp['lastPrice']
+    except Exception as e:
+        print("ERROR: {}".format(e))
+        return 'No data for that symbol.'
 
 # Send a message in the groupchat
 def reply(msg):
