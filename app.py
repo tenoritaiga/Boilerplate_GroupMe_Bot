@@ -37,6 +37,7 @@ def webhook():
 def test():
     global auth_token
     global auth_timestamp
+    print("auth_timestamp is: {}".format(auth_timestamp))
     # If the token is stale, request a new one and store it along with the
     # timestamp of when we requested it
     if arrow.get(auth_timestamp) < (arrow.utcnow().shift(minutes=-30)):
