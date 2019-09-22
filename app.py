@@ -10,6 +10,7 @@ from flask.json import jsonify
 from pprint import pformat
 from time import time
 import arrow
+import redis
 
 app = Flask(__name__)
 client_id = os.environ.get('CLIENT_ID')
@@ -19,6 +20,12 @@ authorization_base_url = "https://auth.tdameritrade.com/auth"
 token_url = "https://api.tdameritrade.com/v1/oauth2/token"
 
 bot_id = "REPLACE THIS WITH YOUR BOT ID ONCE BOT IS ADDED TO THE CHAT"
+
+# Connect to redis
+r = redis.Redis(host=os.environ.get("REDIS_URL"),port=6379,decode_responses=True)
+
+r.set('auth_token','none')
+r.set('auth_timestamp','2010-09-22T02:58:26.073140+00:00')
 
 # Called whenever the app's callback URL receives a POST request
 # That'll happen every time a message is sent in the group
@@ -33,16 +40,16 @@ def webhook():
     
 @app.route('/', methods=['GET'])
 def test():
-    global auth_token
-    global auth_timestamp
+    auth_timestamp = r.get('auth_timestamp')
     print("auth_timestamp is: {}".format(auth_timestamp))
     # If the token is stale, request a new one and store it along with the
     # timestamp of when we requested it
     if arrow.get(auth_timestamp) < (arrow.utcnow().shift(minutes=-30)):
         print("requesting a new auth token")
         auth_token = get_new_auth_token()
+        r.set('auth_token',auth_token)
         auth_timestamp = str(arrow.utcnow())
-        
+        r.set('auth_timestamp',auth_timestamp)
     return auth_token
         
 
