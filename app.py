@@ -69,7 +69,12 @@ def get_quote(symbol,token):
         url = "https://api.tdameritrade.com/v1/marketdata/"+symbol+"/quotes"
         r = requests.get(url,headers=headers)
         resp = r.json()[symbol]
-        return resp['description'] + ' - Last price: $' + str(resp['lastPrice'])
+        
+        day_change = (resp['mark'] - resp['openPrice']) / resp['mark']
+        return resp['description'] + 
+        '\n Price: $' + str(resp['mark'] +
+        '\n Day Change: ' + str(day_change) +
+        '\n Volume: ' + str(resp['totalVolume']))
     except Exception as e:
         print("ERROR: {}".format(e))
         return 'No data for that symbol.'
