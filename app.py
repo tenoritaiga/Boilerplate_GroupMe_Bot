@@ -41,6 +41,7 @@ def webhook():
 @app.route('/', methods=['GET'])
 def test():
     auth_timestamp = r.get('auth_timestamp')
+    auth_token = r.get('auth_token')
     print("auth_timestamp is: {}".format(auth_timestamp))
     # If the token is stale, request a new one and store it along with the
     # timestamp of when we requested it
