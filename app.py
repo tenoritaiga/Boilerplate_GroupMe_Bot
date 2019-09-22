@@ -19,7 +19,7 @@ redirect_uri = "https://waltbot-groupme.herokuapp.com"
 authorization_base_url = "https://auth.tdameritrade.com/auth"
 token_url = "https://api.tdameritrade.com/v1/oauth2/token"
 
-bot_id = "882ff3bebbc2fd9cfac5674ab3"
+bot_id = os.environ.get('GROUPME_BOT_ID')
 
 # Connect to redis
 r = redis.from_url(os.environ.get("REDIS_URL"),decode_responses=True)
@@ -49,7 +49,7 @@ def webhook():
     message = request.get_json()
 
     if message['text'].startswith('!stonks'):
-        symbol = message['text'].split(' ')[1]
+        symbol = message['text'].split(' ')[1].upper()
         reply(get_quote(symbol,auth_token))
 
     return "ok", 200
@@ -69,7 +69,7 @@ def get_quote(symbol,token):
         url = "https://api.tdameritrade.com/v1/marketdata/"+symbol+"/quotes"
         r = requests.get(url,headers=headers)
         resp = r.json()[symbol]
-        return resp['description'] + ' - Last price: ' + str(resp['lastPrice'])
+        return resp['description'] + ' - Last price: $' + str(resp['lastPrice'])
     except Exception as e:
         print("ERROR: {}".format(e))
         return 'No data for that symbol.'
