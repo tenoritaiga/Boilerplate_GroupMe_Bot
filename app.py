@@ -14,8 +14,6 @@ import arrow
 app = Flask(__name__)
 client_id = os.environ.get('CLIENT_ID')
 refresh_token = os.environ.get('REFRESH_TOKEN')
-auth_token = "none"
-auth_timestamp = "2010-01-01T00:01:10.490919+00:00"
 redirect_uri = "https://waltbot-groupme.herokuapp.com"
 authorization_base_url = "https://auth.tdameritrade.com/auth"
 token_url = "https://api.tdameritrade.com/v1/oauth2/token"
@@ -35,16 +33,14 @@ def webhook():
     
 @app.route('/', methods=['GET'])
 def test():
+    global auth_token
     global auth_timestamp
     print("auth_timestamp is: {}".format(auth_timestamp))
     # If the token is stale, request a new one and store it along with the
     # timestamp of when we requested it
-    global auth_timestamp
     if arrow.get(auth_timestamp) < (arrow.utcnow().shift(minutes=-30)):
         print("requesting a new auth token")
-        global auth_token
         auth_token = get_new_auth_token()
-        global auth_timestamp
         auth_timestamp = str(arrow.utcnow())
         
     return auth_token
@@ -104,3 +100,8 @@ def upload_image_to_groupme(imgURL):
 # Checks whether the message sender is a bot
 def sender_is_bot(message):
 	return message['sender_type'] == "bot"
+
+if __name__ == '__main__':
+    auth_token = "none"
+    auth_timestamp = "2010-01-01T00:01:10.490919+00:00"
+    app.run()
