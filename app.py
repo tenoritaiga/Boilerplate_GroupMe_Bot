@@ -70,8 +70,10 @@ def get_quote(symbol,token):
         r = requests.get(url,headers=headers)
         resp = r.json()[symbol]
         
-        day_change = (resp['mark'] - resp['openPrice']) / resp['mark']
-        message = "{}\nPrice: ${}\nDay Change: {}\nVolume: {}".format(
+        day_change = ((resp['mark'] - resp['openPrice']) / resp['mark'])*100
+        day_change = round(day_change,2)
+        
+        message = "{}\nPrice: ${}\nDay Change: {}%\nVolume: {}".format(
             resp['description'],
             str(resp['mark']),
             str(day_change),
