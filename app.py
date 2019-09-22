@@ -45,14 +45,14 @@ def webhook():
         auth_timestamp = str(arrow.utcnow())
         r.set('auth_timestamp',auth_timestamp)
         
-	# 'message' is an object that represents a single GroupMe message.
+    # 'message' is an object that represents a single GroupMe message.
     message = request.get_json()
 
-	if message['text'].startswith('!stonks'):
+    if message['text'].startswith('!stonks'):
         symbol = message['text'].split(' ')[1]
         reply(get_quote(symbol,auth_token))
 
-	return "ok", 200
+    return "ok", 200
 
 ################################################################################
 
@@ -76,49 +76,49 @@ def get_quote(symbol,token):
 
 # Send a message in the groupchat
 def reply(msg):
-	url = 'https://api.groupme.com/v3/bots/post'
-	data = {
-		'bot_id'		: bot_id,
-		'text'			: msg
-	}
-	request = Request(url, urlencode(data).encode())
-	json = urlopen(request).read().decode()
+    url = 'https://api.groupme.com/v3/bots/post'
+    data = {
+        'bot_id'        : bot_id,
+        'text'          : msg
+    }
+    request = Request(url, urlencode(data).encode())
+    json = urlopen(request).read().decode()
 
 # Send a message with an image attached in the groupchat
 def reply_with_image(msg, imgURL):
-	url = 'https://api.groupme.com/v3/bots/post'
-	urlOnGroupMeService = upload_image_to_groupme(imgURL)
-	data = {
-		'bot_id'		: bot_id,
-		'text'			: msg,
-		'picture_url'		: urlOnGroupMeService
-	}
-	request = Request(url, urlencode(data).encode())
-	json = urlopen(request).read().decode()
-	
+    url = 'https://api.groupme.com/v3/bots/post'
+    urlOnGroupMeService = upload_image_to_groupme(imgURL)
+    data = {
+        'bot_id'        : bot_id,
+        'text'          : msg,
+        'picture_url'       : urlOnGroupMeService
+    }
+    request = Request(url, urlencode(data).encode())
+    json = urlopen(request).read().decode()
+    
 # Uploads image to GroupMe's services and returns the new URL
 def upload_image_to_groupme(imgURL):
-	imgRequest = requests.get(imgURL, stream=True)
-	filename = 'temp.png'
-	postImage = None
-	if imgRequest.status_code == 200:
-		# Save Image
-		with open(filename, 'wb') as image:
-			for chunk in imgRequest:
-				image.write(chunk)
-		# Send Image
-		headers = {'content-type': 'application/json'}
-		url = 'https://image.groupme.com/pictures'
-		files = {'file': open(filename, 'rb')}
-		payload = {'access_token': 'eo7JS8SGD49rKodcvUHPyFRnSWH1IVeZyOqUMrxU'}
-		r = requests.post(url, files=files, params=payload)
-		imageurl = r.json()['payload']['url']
-		os.remove(filename)
-		return imageurl
+    imgRequest = requests.get(imgURL, stream=True)
+    filename = 'temp.png'
+    postImage = None
+    if imgRequest.status_code == 200:
+        # Save Image
+        with open(filename, 'wb') as image:
+            for chunk in imgRequest:
+                image.write(chunk)
+        # Send Image
+        headers = {'content-type': 'application/json'}
+        url = 'https://image.groupme.com/pictures'
+        files = {'file': open(filename, 'rb')}
+        payload = {'access_token': 'eo7JS8SGD49rKodcvUHPyFRnSWH1IVeZyOqUMrxU'}
+        r = requests.post(url, files=files, params=payload)
+        imageurl = r.json()['payload']['url']
+        os.remove(filename)
+        return imageurl
 
 # Checks whether the message sender is a bot
 def sender_is_bot(message):
-	return message['sender_type'] == "bot"
+    return message['sender_type'] == "bot"
 
 if __name__ == '__main__':
     auth_token = "none"
