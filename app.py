@@ -46,7 +46,7 @@ def webhook():
         r.set('auth_timestamp',auth_timestamp)
         
 	# 'message' is an object that represents a single GroupMe message.
-	message = request.get_json()
+    message = request.get_json()
 
 	if message['text'].startswith('!stonks'):
         symbol = message['text'].split(' ')[1]
