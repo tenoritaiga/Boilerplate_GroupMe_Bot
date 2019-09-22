@@ -71,10 +71,12 @@ def get_quote(symbol,token):
         resp = r.json()[symbol]
         
         day_change = (resp['mark'] - resp['openPrice']) / resp['mark']
-        return resp['description'] + 
-        '\n Price: $' + str(resp['mark']) +
-        '\n Day Change: ' + str(day_change) +
-        '\n Volume: ' + str(resp['totalVolume'])
+        message = "{}\nPrice: ${}\nDay Change: {}\nVolume: {}".format(
+            str(resp['mark']),
+            str(day_change),
+            str(resp['totalVolume']))
+        return message
+
     except Exception as e:
         print("ERROR: {}".format(e))
         return 'No data for that symbol.'
