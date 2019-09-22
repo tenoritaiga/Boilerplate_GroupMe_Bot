@@ -72,6 +72,7 @@ def get_quote(symbol,token):
         
         day_change = (resp['mark'] - resp['openPrice']) / resp['mark']
         message = "{}\nPrice: ${}\nDay Change: {}\nVolume: {}".format(
+            resp['description'],
             str(resp['mark']),
             str(day_change),
             str(resp['totalVolume']))
