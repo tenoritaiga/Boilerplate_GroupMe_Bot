@@ -53,12 +53,6 @@ def webhook():
         reply(get_quote(symbol,auth_token))
 
 	return "ok", 200
-    
-@app.route('/', methods=['GET'])
-def test():
-
-    return auth_token
-        
 
 ################################################################################
 
