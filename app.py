@@ -5,7 +5,7 @@
 import os, json, requests
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
-from flask import Flask, request, session
+from flask import Flask, request
 from flask.json import jsonify
 from pprint import pformat
 from time import time
@@ -14,8 +14,8 @@ import arrow
 app = Flask(__name__)
 client_id = os.environ.get('CLIENT_ID')
 refresh_token = os.environ.get('REFRESH_TOKEN')
-session['auth_token'] = "none"
-session['auth_timestamp'] = "2010-01-01T00:01:10.490919+00:00"
+auth_token = "none"
+auth_timestamp = "2010-01-01T00:01:10.490919+00:00"
 redirect_uri = "https://waltbot-groupme.herokuapp.com"
 authorization_base_url = "https://auth.tdameritrade.com/auth"
 token_url = "https://api.tdameritrade.com/v1/oauth2/token"
@@ -35,14 +35,17 @@ def webhook():
     
 @app.route('/', methods=['GET'])
 def test():
-    print("auth_timestamp is: {}".format(session['auth_timestamp']))
+    global auth_timestamp
+    print("auth_timestamp is: {}".format(auth_timestamp))
     # If the token is stale, request a new one and store it along with the
     # timestamp of when we requested it
-    if arrow.get(session['auth_timestamp']) < (arrow.utcnow().shift(minutes=-30)):
+    global auth_timestamp
+    if arrow.get(auth_timestamp) < (arrow.utcnow().shift(minutes=-30)):
         print("requesting a new auth token")
-        session['auth_token'] = get_new_auth_token()
-        session['auth_timestamp'] = str(arrow.utcnow())
-        session.modified = True
+        global auth_token
+        auth_token = get_new_auth_token()
+        global auth_timestamp
+        auth_timestamp = str(arrow.utcnow())
         
     return auth_token
         

@@ -1,13 +1,12 @@
-from flask import Flask, session
+from flask import Flask
 
 app = Flask(__name__)
-session['test'] = 'abcde'
+test = 'foo'
 
-@app.route('/',methods=['GET'])
-def foo():
-    print(session['test'])
-    session['test'] = 'vwxyz'
-    session.modified = True
-    return 'done'
-
-foo()
+@app.route('/', methods=['GET'])
+def bar():
+    global test
+    print(test)
+    test = 'baz'
+    print(test)
+    return 'ok'
