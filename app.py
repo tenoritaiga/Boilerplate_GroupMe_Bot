@@ -22,7 +22,7 @@ token_url = "https://api.tdameritrade.com/v1/oauth2/token"
 bot_id = "REPLACE THIS WITH YOUR BOT ID ONCE BOT IS ADDED TO THE CHAT"
 
 # Connect to redis
-r = redis.Redis(host=os.environ.get("REDIS_URL"),port=6379,decode_responses=True)
+r = redis.from_url(os.environ.get("REDIS_URL"),decode_responses=True)
 
 r.set('auth_token','none')
 r.set('auth_timestamp','2010-09-22T02:58:26.073140+00:00')
