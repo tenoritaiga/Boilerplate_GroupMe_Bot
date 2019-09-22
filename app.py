@@ -72,9 +72,9 @@ def get_quote(symbol,token):
         
         day_change = (resp['mark'] - resp['openPrice']) / resp['mark']
         return resp['description'] + 
-        '\n Price: $' + str(resp['mark'] +
+        '\n Price: $' + str(resp['mark']) +
         '\n Day Change: ' + str(day_change) +
-        '\n Volume: ' + str(resp['totalVolume']))
+        '\n Volume: ' + str(resp['totalVolume'])
     except Exception as e:
         print("ERROR: {}".format(e))
         return 'No data for that symbol.'
