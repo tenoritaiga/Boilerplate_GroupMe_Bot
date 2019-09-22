@@ -119,8 +119,3 @@ def upload_image_to_groupme(imgURL):
 # Checks whether the message sender is a bot
 def sender_is_bot(message):
     return message['sender_type'] == "bot"
-
-if __name__ == '__main__':
-    auth_token = "none"
-    auth_timestamp = "2010-01-01T00:01:10.490919+00:00"
-    app.run()
